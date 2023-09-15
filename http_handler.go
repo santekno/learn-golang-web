@@ -1,7 +1,9 @@
 package main
 
 import (
+	"embed"
 	"fmt"
+	"html/template"
 	"net/http"
 	"strings"
 )
@@ -85,4 +87,58 @@ func GetCookieHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		fmt.Fprintf(w, "hello %s", cookie.Value)
 	}
+}
+
+func ServeFileHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Query().Get("name") != "" {
+		http.ServeFile(w, r, "./resources/test.html")
+	} else {
+		http.ServeFile(w, r, "./resources/notfound.html")
+	}
+}
+
+//go:embed resources/test.html
+var resourceTest string
+
+//go:embed resources/notfound.html
+var resourceNotFound string
+
+func ServeFileWithEmbedHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Query().Get("name") != "" {
+		http.ServeFile(w, r, resourceTest)
+	} else {
+		http.ServeFile(w, r, resourceNotFound)
+	}
+}
+
+func SimpleHTMLTemplateHandler(w http.ResponseWriter, r *http.Request) {
+	templateText := `<html><body>{{.}}</body></html>`
+	t, err := template.New("SIMPLE").Parse(templateText)
+	if err != nil {
+		panic(err)
+	}
+
+	t.ExecuteTemplate(w, "SIMPLE", "Hello HTML Template")
+}
+
+func SimpleHTMLFileTemplateHandler(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("./templates/simple.html")
+	if err != nil {
+		panic(err)
+	}
+
+	t.ExecuteTemplate(w, "simple.html", "Hello Santekno, HTML File Template")
+}
+
+func TemplateDirectoryHanlder(w http.ResponseWriter, r *http.Request) {
+	t := template.Must(template.ParseGlob("./templates/*.html"))
+	t.ExecuteTemplate(w, "simple.html", "Hello Santekno, HTML Directory File Template")
+}
+
+//go:embed templates/*.html
+var templates embed.FS
+
+func TemplateEmbedHandler(w http.ResponseWriter, r *http.Request) {
+	t := template.Must(template.ParseFS(templates, `templates/*.html`))
+	t.ExecuteTemplate(w, "simple.html", "Hello Santekno, HTML Embed Template")
 }

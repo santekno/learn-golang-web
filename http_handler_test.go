@@ -359,3 +359,149 @@ func TestGetCookieHandler(t *testing.T) {
 		})
 	}
 }
+
+func TestServeFileWithEmbedHandler(t *testing.T) {
+	type args struct {
+		name string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "get source test hello",
+			args: args{
+				name: "santekno",
+			},
+			want: `<html><h1>Test, Hello</h1></html>`,
+		},
+		{
+			name: "resource not found",
+			args: args{
+				name: "",
+			},
+			want: `<html><h1>Not Found</h1></html>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := httptest.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost/file?name=%s", tt.args.name), nil)
+			recorder := httptest.NewRecorder()
+			ServeFileWithEmbedHandler(recorder, request)
+
+			response := recorder.Result()
+			body, _ := io.ReadAll(response.Body)
+			bodyString := string(body)
+
+			if strings.Contains(bodyString, tt.want) {
+				t.Errorf("response = %v, want %v", bodyString, tt.want)
+			}
+		})
+	}
+}
+
+func TestSimpleHTMLTemplateHandler(t *testing.T) {
+	tests := []struct {
+		name string
+		want string
+	}{
+		{
+			name: "get from embed",
+			want: `
+			<!DOCTYPE html><html lang="en">
+				<head>
+					<meta charset="UTF-8">
+					<title>Hello Santekno, HTML Embed Template</title>
+				</head>
+				<body>
+					<h1>Hello Santekno, HTML Embed Template</h1>
+				</body>
+			</html>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := httptest.NewRequest(http.MethodGet, "http://localhost/file", nil)
+			recorder := httptest.NewRecorder()
+			SimpleHTMLTemplateHandler(recorder, request)
+
+			body, _ := io.ReadAll(recorder.Result().Body)
+			bodyString := string(body)
+
+			if strings.Contains(bodyString, tt.want) {
+				t.Errorf("response = %#v, want = %#v\n", bodyString, tt.want)
+			}
+		})
+	}
+}
+
+func TestSimpleHTMLFileTemplateHandler(t *testing.T) {
+	tests := []struct {
+		name string
+		want string
+	}{
+		{
+			name: "get from embed",
+			want: `
+			<!DOCTYPE html><html lang="en">
+				<head>
+					<meta charset="UTF-8">
+					<title>Hello Santekno, HTML Embed Template</title>
+				</head>
+				<body>
+					<h1>Hello Santekno, HTML Embed Template</h1>
+				</body>
+			</html>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := httptest.NewRequest(http.MethodGet, "http://localhost/file", nil)
+			recorder := httptest.NewRecorder()
+			SimpleHTMLFileTemplateHandler(recorder, request)
+
+			body, _ := io.ReadAll(recorder.Result().Body)
+			bodyString := string(body)
+
+			if strings.Contains(bodyString, tt.want) {
+				t.Errorf("response = %#v, want = %#v\n", bodyString, tt.want)
+			}
+		})
+	}
+}
+
+func TestTemplateEmbedHandler(t *testing.T) {
+	tests := []struct {
+		name string
+		want string
+	}{
+		{
+			name: "get from embed",
+			want: `
+			<!DOCTYPE html><html lang="en">
+				<head>
+					<meta charset="UTF-8">
+					<title>Hello Santekno, HTML Embed Template</title>
+				</head>
+				<body>
+					<h1>Hello Santekno, HTML Embed Template</h1>
+				</body>
+			</html>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := httptest.NewRequest(http.MethodGet, "http://localhost/file", nil)
+			recorder := httptest.NewRecorder()
+			TemplateEmbedHandler(recorder, request)
+
+			body, _ := io.ReadAll(recorder.Result().Body)
+			bodyString := string(body)
+
+			if strings.Contains(bodyString, tt.want) {
+				t.Errorf("response = %#v, want = %#v\n", bodyString, tt.want)
+			}
+		})
+	}
+}

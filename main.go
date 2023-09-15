@@ -30,6 +30,12 @@ func main() {
 		fmt.Fprintln(w, r.RequestURI)
 	})
 
+	mux.HandleFunc("/file", ServeFileHandler)
+	mux.HandleFunc("/template", SimpleHTMLTemplateHandler)
+	mux.HandleFunc("/template-file", SimpleHTMLFileTemplateHandler)
+	mux.HandleFunc("/template-directory", TemplateDirectoryHanlder)
+	mux.HandleFunc("/template-embed", TemplateEmbedHandler)
+
 	mux.HandleFunc("/set-cookie", SetCookieHandler)
 	mux.HandleFunc("/get-cookie", GetCookieHandler)
 
