@@ -381,7 +381,7 @@ func TestServeFileWithEmbedHandler(t *testing.T) {
 			args: args{
 				name: "",
 			},
-			want: `<html><h1>Not Found</h1></html>`,
+			want: `404 page not found`,
 		},
 	}
 	for _, tt := range tests {
@@ -394,7 +394,7 @@ func TestServeFileWithEmbedHandler(t *testing.T) {
 			body, _ := io.ReadAll(response.Body)
 			bodyString := string(body)
 
-			if strings.Contains(bodyString, tt.want) {
+			if !reflect.DeepEqual(bodyString, tt.want) {
 				t.Errorf("response = %v, want %v", bodyString, tt.want)
 			}
 		})
@@ -408,16 +408,7 @@ func TestSimpleHTMLTemplateHandler(t *testing.T) {
 	}{
 		{
 			name: "get from embed",
-			want: `
-			<!DOCTYPE html><html lang="en">
-				<head>
-					<meta charset="UTF-8">
-					<title>Hello Santekno, HTML Embed Template</title>
-				</head>
-				<body>
-					<h1>Hello Santekno, HTML Embed Template</h1>
-				</body>
-			</html>`,
+			want: "<html><body>Hello HTML Template</body></html>",
 		},
 	}
 	for _, tt := range tests {
@@ -429,7 +420,7 @@ func TestSimpleHTMLTemplateHandler(t *testing.T) {
 			body, _ := io.ReadAll(recorder.Result().Body)
 			bodyString := string(body)
 
-			if strings.Contains(bodyString, tt.want) {
+			if !reflect.DeepEqual(bodyString, tt.want) {
 				t.Errorf("response = %#v, want = %#v\n", bodyString, tt.want)
 			}
 		})
@@ -443,16 +434,7 @@ func TestSimpleHTMLFileTemplateHandler(t *testing.T) {
 	}{
 		{
 			name: "get from embed",
-			want: `
-			<!DOCTYPE html><html lang="en">
-				<head>
-					<meta charset="UTF-8">
-					<title>Hello Santekno, HTML Embed Template</title>
-				</head>
-				<body>
-					<h1>Hello Santekno, HTML Embed Template</h1>
-				</body>
-			</html>`,
+			want: "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\">\n    <title>Hello Santekno, HTML File Template</title>\n  </head>\n  <body>\n    <h1>Hello Santekno, HTML File Template</h1>\n  </body>\n</html>",
 		},
 	}
 	for _, tt := range tests {
@@ -464,7 +446,7 @@ func TestSimpleHTMLFileTemplateHandler(t *testing.T) {
 			body, _ := io.ReadAll(recorder.Result().Body)
 			bodyString := string(body)
 
-			if strings.Contains(bodyString, tt.want) {
+			if !reflect.DeepEqual(bodyString, tt.want) {
 				t.Errorf("response = %#v, want = %#v\n", bodyString, tt.want)
 			}
 		})
@@ -478,16 +460,7 @@ func TestTemplateEmbedHandler(t *testing.T) {
 	}{
 		{
 			name: "get from embed",
-			want: `
-			<!DOCTYPE html><html lang="en">
-				<head>
-					<meta charset="UTF-8">
-					<title>Hello Santekno, HTML Embed Template</title>
-				</head>
-				<body>
-					<h1>Hello Santekno, HTML Embed Template</h1>
-				</body>
-			</html>`,
+			want: "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\">\n    <title>Hello Santekno, HTML Embed Template</title>\n  </head>\n  <body>\n    <h1>Hello Santekno, HTML Embed Template</h1>\n  </body>\n</html>",
 		},
 	}
 	for _, tt := range tests {
@@ -499,7 +472,59 @@ func TestTemplateEmbedHandler(t *testing.T) {
 			body, _ := io.ReadAll(recorder.Result().Body)
 			bodyString := string(body)
 
-			if strings.Contains(bodyString, tt.want) {
+			if !reflect.DeepEqual(bodyString, tt.want) {
+				t.Errorf("response = %#v, want = %#v\n", bodyString, tt.want)
+			}
+		})
+	}
+}
+
+func TestTemplateDataMapHandler(t *testing.T) {
+	tests := []struct {
+		name string
+		want string
+	}{
+		{
+			name: "get from embed",
+			want: "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\">\n    <title>Template Data Map</title>\n  </head>\n  <body>\n    <h1>Hello Santekno</h1>\n  </body>\n</html>",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := httptest.NewRequest(http.MethodGet, "http://localhost/file", nil)
+			recorder := httptest.NewRecorder()
+			TemplateDataMapHandler(recorder, request)
+
+			body, _ := io.ReadAll(recorder.Result().Body)
+			bodyString := string(body)
+
+			if !reflect.DeepEqual(bodyString, tt.want) {
+				t.Errorf("response = %#v, want = %#v\n", bodyString, tt.want)
+			}
+		})
+	}
+}
+
+func TestTemplateDataStructHandler(t *testing.T) {
+	tests := []struct {
+		name string
+		want string
+	}{
+		{
+			name: "get from embed",
+			want: "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\">\n    <title>Template Data Struct</title>\n  </head>\n  <body>\n    <h1>Hello Santekno</h1>\n  </body>\n</html>",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := httptest.NewRequest(http.MethodGet, "http://localhost/file", nil)
+			recorder := httptest.NewRecorder()
+			TemplateDataStructHandler(recorder, request)
+
+			body, _ := io.ReadAll(recorder.Result().Body)
+			bodyString := string(body)
+
+			if !reflect.DeepEqual(bodyString, tt.want) {
 				t.Errorf("response = %#v, want = %#v\n", bodyString, tt.want)
 			}
 		})

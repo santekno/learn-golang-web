@@ -35,6 +35,7 @@ func main() {
 	mux.HandleFunc("/template-file", SimpleHTMLFileTemplateHandler)
 	mux.HandleFunc("/template-directory", TemplateDirectoryHanlder)
 	mux.HandleFunc("/template-embed", TemplateEmbedHandler)
+	mux.HandleFunc("/template-data-struct", TemplateDataStructHandler)
 
 	mux.HandleFunc("/set-cookie", SetCookieHandler)
 	mux.HandleFunc("/get-cookie", GetCookieHandler)
