@@ -1,7 +1,6 @@
 package main
 
 import (
-	"embed"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -97,10 +96,10 @@ func ServeFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//go:embed resources/test.html
+// // go:embed resources/test.html
 var resourceTest string
 
-//go:embed resources/notfound.html
+// //go:embed resources/notfound.html
 var resourceNotFound string
 
 func ServeFileWithEmbedHandler(w http.ResponseWriter, r *http.Request) {
@@ -135,31 +134,10 @@ func TemplateDirectoryHanlder(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "simple.html", "Hello Santekno, HTML Directory File Template")
 }
 
-//go:embed templates/*.html
-var templates embed.FS
+// // go:embed templates/*.html
+// var templates embed.FS
 
-func TemplateEmbedHandler(w http.ResponseWriter, r *http.Request) {
-	t := template.Must(template.ParseFS(templates, `templates/*.html`))
-	t.ExecuteTemplate(w, "simple.html", "Hello Santekno, HTML Embed Template")
-}
-
-func TemplateDataMapHandler(w http.ResponseWriter, r *http.Request) {
-	t := template.Must(template.ParseFiles("./templates/name.html"))
-	t.ExecuteTemplate(w, "name.html", map[string]interface{}{
-		"Title": "Template Data Map",
-		"Name":  "Santekno",
-	})
-}
-
-type Page struct {
-	Title string
-	Name  string
-}
-
-func TemplateDataStructHandler(w http.ResponseWriter, r *http.Request) {
-	t := template.Must(template.ParseFiles("./templates/name.html"))
-	t.ExecuteTemplate(w, "name.html", Page{
-		Title: "Template Data Struct",
-		Name:  "Santekno",
-	})
-}
+// func TemplateEmbedHandler(w http.ResponseWriter, r *http.Request) {
+// 	t := template.Must(template.ParseFS(templates, `templates/*.html`))
+// 	t.ExecuteTemplate(w, "simple.html", "Hello Santekno, HTML Embed Template")
+// }
