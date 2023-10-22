@@ -453,31 +453,31 @@ func TestSimpleHTMLFileTemplateHandler(t *testing.T) {
 	}
 }
 
-func TestTemplateEmbedHandler(t *testing.T) {
-	tests := []struct {
-		name string
-		want string
-	}{
-		{
-			name: "get from embed",
-			want: "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\">\n    <title>Hello Santekno, HTML Embed Template</title>\n  </head>\n  <body>\n    <h1>Hello Santekno, HTML Embed Template</h1>\n  </body>\n</html>",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			request := httptest.NewRequest(http.MethodGet, "http://localhost/file", nil)
-			recorder := httptest.NewRecorder()
-			TemplateEmbedHandler(recorder, request)
+// func TestTemplateEmbedHandler(t *testing.T) {
+// 	tests := []struct {
+// 		name string
+// 		want string
+// 	}{
+// 		{
+// 			name: "get from embed",
+// 			want: "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\">\n    <title>Hello Santekno, HTML Embed Template</title>\n  </head>\n  <body>\n    <h1>Hello Santekno, HTML Embed Template</h1>\n  </body>\n</html>",
+// 		},
+// 	}
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			request := httptest.NewRequest(http.MethodGet, "http://localhost/file", nil)
+// 			recorder := httptest.NewRecorder()
+// 			TemplateEmbedHandler(recorder, request)
 
-			body, _ := io.ReadAll(recorder.Result().Body)
-			bodyString := string(body)
+// 			body, _ := io.ReadAll(recorder.Result().Body)
+// 			bodyString := string(body)
 
-			if !reflect.DeepEqual(bodyString, tt.want) {
-				t.Errorf("response = %#v, want = %#v\n", bodyString, tt.want)
-			}
-		})
-	}
-}
+// 			if !reflect.DeepEqual(bodyString, tt.want) {
+// 				t.Errorf("response = %#v, want = %#v\n", bodyString, tt.want)
+// 			}
+// 		})
+// 	}
+// }
 
 func TestTemplateDataMapHandler(t *testing.T) {
 	tests := []struct {

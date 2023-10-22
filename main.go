@@ -15,7 +15,7 @@ func main() {
 	fileServer := http.FileServer(http.FS(directory))
 
 	mux := http.NewServeMux()
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
+	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "hello world")
@@ -47,13 +47,35 @@ func main() {
 	mux.HandleFunc("/template-manual-global-function", TemplateManualGlobalFunctionHandler)
 	mux.HandleFunc("/template-function-pipelines", TemplateFunctionPipelinesHandler)
 	mux.HandleFunc("/template-cache", TemplateCachingHandler)
+	mux.HandleFunc("/template-auto-escape", TemplateAutoEscapeHandler)
+	mux.HandleFunc("/template-disable-auto-escape", TemplateDisabledAutoEscapeHandler)
+	mux.HandleFunc("/template-xss-attack", TemplateXSSAttackHandler)
+
+	mux.HandleFunc("/redirect-to", RedirectToHandler)
+	mux.HandleFunc("/redirect-from", RedirectFromHandler)
+
+	mux.HandleFunc("/upload-form", UploadFormHandler)
+	mux.HandleFunc("/upload", UploadHandler)
+
+	mux.HandleFunc("/download", DownloadFileHandler)
 
 	mux.HandleFunc("/set-cookie", SetCookieHandler)
 	mux.HandleFunc("/get-cookie", GetCookieHandler)
 
+	mux.HandleFunc("/panic", func(w http.ResponseWriter, r *http.Request) {
+		panic("upps")
+	})
+
+	logMiddleware := new(LogMiddleware)
+	logMiddleware.Handler = mux
+
+	errMiddleware := &ErrorMiddleware{
+		Handler: logMiddleware,
+	}
+
 	server := http.Server{
 		Addr:    "localhost:8080",
-		Handler: mux,
+		Handler: errMiddleware,
 	}
 
 	err := server.ListenAndServe()
