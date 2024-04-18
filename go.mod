@@ -1,4 +1,4 @@
-module github.com/santekno/belajar-golang-web
+module github.com/santekno/learn-golang-web
 
 go 1.20
 
