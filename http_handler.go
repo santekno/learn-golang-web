@@ -48,3 +48,11 @@ func MultipleParameterValueHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "hello %s", strings.Join(names, " "))
 	}
 }
+
+const X_POWERED_BY = "X-Powered-By"
+
+func RequestHeaderHandler(w http.ResponseWriter, r *http.Request) {
+	poweredBy := r.Header.Get(X_POWERED_BY)
+	w.Header().Add(X_POWERED_BY, poweredBy)
+	fmt.Fprint(w, poweredBy)
+}

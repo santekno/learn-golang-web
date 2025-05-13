@@ -221,3 +221,38 @@ func TestMultipleParameterValueHandler(t *testing.T) {
 		})
 	}
 }
+
+func TestRequestHeaderHandler(t *testing.T) {
+	type args struct {
+		name string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "success return with header",
+			args: args{
+				name: "santekno",
+			},
+			want: "santekno",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := httptest.NewRequest(http.MethodGet, "http://localhost/say?", nil)
+			recorder := httptest.NewRecorder()
+			request.Header.Add(X_POWERED_BY, tt.args.name)
+
+			RequestHeaderHandler(recorder, request)
+
+			response := recorder.Result()
+			poweredBy := response.Header.Get(X_POWERED_BY)
+
+			if !reflect.DeepEqual(poweredBy, tt.want) {
+				t.Errorf("response = %v, want %v", poweredBy, tt.want)
+			}
+		})
+	}
+}
