@@ -33,7 +33,9 @@ func main() {
 	mux.HandleFunc("/template", SimpleHTMLTemplateHandler)
 	mux.HandleFunc("/template-file", SimpleHTMLFileTemplateHandler)
 	mux.HandleFunc("/template-directory", TemplateDirectoryHandler)
-	mux.HandleFunc("/template-embed", TemplateEmbedHandler)
+	// mux.HandleFunc("/template-embed", TemplateEmbedHandler)
+	mux.HandleFunc("/template-map", TemplateDataMapHandler)
+	mux.HandleFunc("/template-struct", TemplateDataStructHandler)
 
 	server := http.Server{
 		Addr:    "localhost:8080",
