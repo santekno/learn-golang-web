@@ -256,3 +256,53 @@ func TestRequestHeaderHandler(t *testing.T) {
 		})
 	}
 }
+
+func TestResponseCodeHandler(t *testing.T) {
+	type args struct {
+		name string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantResp string
+		wantCode int
+	}{
+		{
+			name: "sent param name with value",
+			args: args{
+				name: "ihsan",
+			},
+			wantResp: "Hello ihsan",
+			wantCode: http.StatusOK,
+		},
+		{
+			name: "doesn't sent param name value",
+			args: args{
+				name: "",
+			},
+			wantResp: "name is empty",
+			wantCode: http.StatusBadRequest,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := httptest.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost/say?name=%s", tt.args.name), nil)
+			recorder := httptest.NewRecorder()
+
+			ResponseCodeHandler(recorder, request)
+
+			response := recorder.Result()
+			body, _ := io.ReadAll(response.Body)
+			bodyString := string(body)
+			code := response.StatusCode
+
+			if !reflect.DeepEqual(bodyString, tt.wantResp) {
+				t.Errorf("response = %v, want %v", bodyString, tt.wantResp)
+			}
+
+			if !reflect.DeepEqual(code, tt.wantCode) {
+				t.Errorf("code = %v, want %v", code, tt.wantCode)
+			}
+		})
+	}
+}

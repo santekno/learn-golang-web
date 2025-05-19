@@ -56,3 +56,14 @@ func RequestHeaderHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add(X_POWERED_BY, poweredBy)
 	fmt.Fprint(w, poweredBy)
 }
+
+func ResponseCodeHandler(w http.ResponseWriter, r *http.Request) {
+	name := r.URL.Query().Get("name")
+	if name == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, "name is empty")
+	} else {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "Hello %s", name)
+	}
+}
