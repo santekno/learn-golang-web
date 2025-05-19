@@ -29,6 +29,12 @@ func main() {
 	// static file from resources folder
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
+	// templates
+	mux.HandleFunc("/template", SimpleHTMLTemplateHandler)
+	mux.HandleFunc("/template-file", SimpleHTMLFileTemplateHandler)
+	mux.HandleFunc("/template-directory", TemplateDirectoryHandler)
+	mux.HandleFunc("/template-embed", TemplateEmbedHandler)
+
 	server := http.Server{
 		Addr:    "localhost:8080",
 		Handler: mux,
