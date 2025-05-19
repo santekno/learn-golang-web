@@ -14,6 +14,7 @@ func main() {
 	mux.HandleFunc("/sayhi-multiple", MultipleParameterHandler)
 	mux.HandleFunc("/sayhi-muletiplevalue", MultipleParameterValueHandler)
 	mux.HandleFunc("/set-header", RequestHeaderHandler)
+	mux.HandleFunc("/form-post", FormPostHandler)
 
 	server := http.Server{
 		Addr:    "localhost:8080",

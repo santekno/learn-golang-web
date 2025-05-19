@@ -56,3 +56,14 @@ func RequestHeaderHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add(X_POWERED_BY, poweredBy)
 	fmt.Fprint(w, poweredBy)
 }
+
+func FormPostHandler(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		panic(err)
+	}
+
+	firstName := r.PostForm.Get("first_name")
+	lastName := r.PostForm.Get("last_name")
+	fmt.Fprintf(w, "first_name: %s last_name: %s", firstName, lastName)
+}

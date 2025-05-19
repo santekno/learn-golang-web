@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -252,6 +253,46 @@ func TestRequestHeaderHandler(t *testing.T) {
 
 			if !reflect.DeepEqual(poweredBy, tt.want) {
 				t.Errorf("response = %v, want %v", poweredBy, tt.want)
+			}
+		})
+	}
+}
+
+func TestFormPostHandler(t *testing.T) {
+	type args struct {
+		firstName string
+		lastName  string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "set form post param",
+			args: args{
+				firstName: "ihsan",
+				lastName:  "arif",
+			},
+			want: "first_name: ihsan last_name: arif",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			requestBody := strings.NewReader(fmt.Sprintf("first_name=%s&last_name=%s", tt.args.firstName, tt.args.lastName))
+			request := httptest.NewRequest(http.MethodPost, "http://localhost/say", requestBody)
+			request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+			recorder := httptest.NewRecorder()
+
+			FormPostHandler(recorder, request)
+
+			response := recorder.Result()
+			body, _ := io.ReadAll(response.Body)
+			bodyString := string(body)
+
+			if !reflect.DeepEqual(bodyString, tt.want) {
+				t.Errorf("response = %v, want %v", bodyString, tt.want)
 			}
 		})
 	}
