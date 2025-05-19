@@ -306,3 +306,86 @@ func TestResponseCodeHandler(t *testing.T) {
 		})
 	}
 }
+
+func TestSetCookieHandler(t *testing.T) {
+	type args struct {
+		name string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "set cookie",
+			args: args{
+				name: "ihsan",
+			},
+			want: "ihsan",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := httptest.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost/say?name=%s", tt.args.name), nil)
+			recorder := httptest.NewRecorder()
+			SetCookieHandler(recorder, request)
+
+			cookies := recorder.Result().Cookies()
+
+			for _, cookie := range cookies {
+				if !reflect.DeepEqual(cookie.Value, tt.want) {
+					t.Errorf("response = %s, want %s", cookie.Value, tt.want)
+				}
+			}
+
+		})
+	}
+}
+
+func TestGetCookieHandler(t *testing.T) {
+	type args struct {
+		name string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "get cookie handler without cookie",
+			args: args{
+				name: "",
+			},
+			want: "no cookie",
+		},
+		{
+			name: "get cookie handler with cookie",
+			args: args{
+				name: "ihsan",
+			},
+			want: "hello ihsan",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := httptest.NewRequest(http.MethodGet, "http://localhost/say", nil)
+			if tt.args.name != "" {
+				cookie := new(http.Cookie)
+				cookie.Name = "X-Santekno-Name"
+				cookie.Value = tt.args.name
+				request.AddCookie(cookie)
+			}
+
+			recorder := httptest.NewRecorder()
+			GetCookieHandler(recorder, request)
+
+			response := recorder.Result()
+			body, _ := io.ReadAll(response.Body)
+			bodyString := string(body)
+
+			if !reflect.DeepEqual(bodyString, tt.want) {
+				t.Errorf("response = %s, want %s", bodyString, tt.want)
+			}
+		})
+	}
+}

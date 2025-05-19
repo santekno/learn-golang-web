@@ -67,3 +67,21 @@ func ResponseCodeHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello %s", name)
 	}
 }
+
+func SetCookieHandler(w http.ResponseWriter, r *http.Request) {
+	cookie := new(http.Cookie)
+	cookie.Name = "X-Santekno-Name"
+	cookie.Value = r.URL.Query().Get("name")
+	cookie.Path = "/"
+	http.SetCookie(w, cookie)
+	fmt.Fprintf(w, "success create cookie")
+}
+
+func GetCookieHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("X-Santekno-Name")
+	if err != nil {
+		fmt.Fprint(w, "no cookie")
+	} else {
+		fmt.Fprintf(w, "hello %s", cookie.Value)
+	}
+}
