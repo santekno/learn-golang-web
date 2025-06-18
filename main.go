@@ -36,6 +36,10 @@ func main() {
 	// mux.HandleFunc("/template-embed", TemplateEmbedHandler)
 	mux.HandleFunc("/template-map", TemplateDataMapHandler)
 	mux.HandleFunc("/template-struct", TemplateDataStructHandler)
+	mux.HandleFunc("/template-action-if", TemplateActionIfHandler)
+	mux.HandleFunc("/template-action-comparator", TemplateActionComparatorHandler)
+	mux.HandleFunc("/template-action-range", TemplateActionRangeHandler)
+	mux.HandleFunc("/template-action-with", TemplateActionWithHandler)
 
 	server := http.Server{
 		Addr:    "localhost:8080",
