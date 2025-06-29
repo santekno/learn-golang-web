@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -243,5 +244,28 @@ func TemplateFunctionPipelineHandler(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "FUNCTION", Page{
 		Title: "Hello",
 		Name:  "Santekno",
+	})
+}
+
+//go:embed templates/*.html
+var templates embed.FS
+
+var myTemplates = template.Must(template.ParseFS(templates, "templates/*.html"))
+
+func TemplateCachingHandler(w http.ResponseWriter, r *http.Request) {
+	myTemplates.ExecuteTemplate(w, "simple.html", "Hello HTML Template")
+}
+
+func TemplateAutoEscapeHandler(w http.ResponseWriter, r *http.Request) {
+	myTemplates.ExecuteTemplate(w, "post.html", map[string]interface{}{
+		"Title": "Golang Tutorial Santekno Auto Escape",
+		"Body":  template.HTML("<p>Selamat Belajar Golang Auto Escape Santekno<script>alert('Halo Anda ke hack')</script></p>"),
+	})
+}
+
+func TemplateXSSAttackHandler(w http.ResponseWriter, r *http.Request) {
+	myTemplates.ExecuteTemplate(w, "post.html", map[string]interface{}{
+		"Title": "Golang Tutorial Santekno Auto Escape",
+		"Body":  template.HTML(r.URL.Query().Get("body")),
 	})
 }

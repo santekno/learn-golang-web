@@ -46,6 +46,10 @@ func main() {
 	mux.HandleFunc("/template-manual-global-function", TemplateGlobalFunctionHandler)
 	mux.HandleFunc("/template-function-pipelines", TemplateFunctionPipelineHandler)
 
+	mux.HandleFunc("/template-cache", TemplateCachingHandler)
+	mux.HandleFunc("/template-auto-escape", TemplateAutoEscapeHandler)
+	mux.HandleFunc("/template-xss-attack", TemplateXSSAttackHandler)
+
 	server := http.Server{
 		Addr:    "localhost:8080",
 		Handler: mux,
