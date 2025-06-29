@@ -40,6 +40,7 @@ func main() {
 	mux.HandleFunc("/template-action-comparator", TemplateActionComparatorHandler)
 	mux.HandleFunc("/template-action-range", TemplateActionRangeHandler)
 	mux.HandleFunc("/template-action-with", TemplateActionWithHandler)
+	mux.HandleFunc("/template-layout", TemplateLayoutHandler)
 
 	server := http.Server{
 		Addr:    "localhost:8080",
